@@ -1,10 +1,15 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 function Home() {
   return (
     <div className="flex items-center space-x-4">
-      <Button>Reconcile</Button>
+      <Link href="/reconcile">
+        <Button className="bg-slate-400 dark:bg-slate-300">
+          Reconcile GUIDs
+        </Button>
+      </Link>
 
       <span className="w-16 border-t border-current h-[0.3rem]"></span>
 
@@ -19,7 +24,11 @@ function Home() {
 
       <span className="w-16 border-t border-current h-[0.3rem]"></span>
 
-      <Button>Database Search</Button>
+      <Link href="/search">
+        <Button className="bg-slate-400 dark:bg-slate-300">
+          Database Search
+        </Button>
+      </Link>
     </div>
   );
 }

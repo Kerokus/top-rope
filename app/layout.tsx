@@ -39,7 +39,7 @@ export default function RootLayout({
           >
             <NavBar />
             <Separator />
-            <main className="flex flex-grow w-full justify-center items-center dark:bg-neutral-950">
+            <main className="flex flex-grow w-full justify-center items-center bg-slate-200 dark:bg-slate-950">
               {children}
             </main>
           </div>
