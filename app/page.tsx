@@ -19,6 +19,7 @@ function Home() {
           alt="Top Rope Logo"
           width={300}
           height={300}
+          priority
         />
       </div>
 
