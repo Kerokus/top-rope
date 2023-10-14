@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model attribute_list {
+  guid           String
+  attribute_data String
+
+  @@id([guid, attribute_data])
+  @@index([attribute_data], map: "idx_attribute")
+}
+
+model entity_id {
+  guid               String               @id
+  reconcile_relation reconcile_relation[]
+}
+
+model reconcile_list {
+  attribute_data     String               @id
+  reconcile_relation reconcile_relation[]
+}
+
+model reconcile_relation {
+  attribute_data String
+  guid           String
+  entity_id      entity_id      @relation(fields: [guid], references: [guid], onDelete: NoAction, onUpdate: NoAction)
+  reconcile_list reconcile_list @relation(fields: [attribute_data], references: [attribute_data], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([attribute_data, guid])
+}
