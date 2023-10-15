@@ -11,7 +11,16 @@ export default function ReconcilePage() {
       try {
         const response = await fetch("/api/reconcile");
         const result = await response.json();
-        setData(result);
+
+        // Filter out duplicates based on the attribute_data key
+        const seen = new Set();
+        const uniqueData = result.filter((item) => {
+          const isDuplicate = seen.has(item.attribute_data);
+          seen.add(item.attribute_data);
+          return !isDuplicate;
+        });
+
+        setData(uniqueData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -27,7 +36,7 @@ export default function ReconcilePage() {
       </h2>
       <ul>
         {data.map((item, index) => (
-          <Link href={`/reconcile/${item.attribute_data}`} key={index}>
+          <Link href={`/reconcile/${item.id}`} key={index}>
             <li
               className={`p-4 my-2 cursor-pointer transition-colors duration-200 ease-in-out ${
                 index % 2 === 0

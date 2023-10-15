@@ -1,14 +1,27 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Search() {
   const [queryData, setQueryData] = useState("");
   const [searchType, setSearchType] = useState("GUID"); // "GUID" or "Selector"
   const [results, setResults] = useState<any[]>([]);
+  const [selectors, setSelectors] = useState<string[]>([]);
+  const [selectedSelector, setSelectedSelector] = useState("any");
 
   const handleSearch = async () => {
     //Fill this in later.
   };
+
+  useEffect(() => {
+    // Fetch the selectors when the component mounts
+    const fetchSelectors = async () => {
+      const response = await fetch("/api/selectors");
+      const data = await response.json();
+      setSelectors(data.map((item: any) => item.selector));
+    };
+
+    fetchSelectors();
+  }, []);
 
   return (
     <div className="w-4/5 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transform -translate-y-1/2">
@@ -60,10 +73,15 @@ export default function Search() {
             <select
               id="selector"
               className="border p-2 rounded mr-2 w-1/3"
-              defaultValue="any"
+              value={selectedSelector}
+              onChange={(e) => setSelectedSelector(e.target.value)}
               disabled={searchType !== "Selector"}>
               <option value="any">Any</option>
-              {/* Additional options will be added here later */}
+              {selectors.map((selector) => (
+                <option key={selector} value={selector}>
+                  {selector}
+                </option>
+              ))}
             </select>
             <input
               type="text"
