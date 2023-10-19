@@ -4,6 +4,7 @@ import Image from "next/image";
 function me() {
   return (
     <div>
+      <h1 className="flex justify-center">See? There's nothing here.</h1>
       <Image
         src="/images/john-cena.gif"
         alt="Top Rope Logo"

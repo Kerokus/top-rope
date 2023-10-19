@@ -1,22 +1,46 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ConflictResolution() {
+  const router = useRouter();
+  const { id } = router.prefetch; // <-- Gives us the attribute name from the URL
   const [isAnyCardSelected, setIsAnyCardSelected] = useState(false);
   const [selectedGuids, setSelectedGuids] = useState<string[]>([]);
+  const [guids, setGuids] = useState<any[]>([]);
+  const clickedAttributeName = id as string; // Convert id to string
 
-  // Mock card data
-  const clickedAttributeName = "AttributeX";
-  const guids = [
-    {
-      id: "GUID1",
-      attributes: ["Attribute1", "AttributeX", "Attribute3"],
-    },
-    {
-      id: "GUID2",
-      attributes: ["Attribute2", "Attribute4", "AttributeX"],
-    },
-  ];
+  useEffect(() => {
+    if (id) {
+      const attributeName = id as string; // Convert id to string
+
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`/api/reconcile/${attributeName}`);
+          const result = await response.json();
+          // Assuming the result is an array of GUIDs and their attributes
+          setGuids(result);
+        } catch (error) {
+          console.error("Failed to fetch data:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [id]); // This effect will run whenever the id changes
+
+  // // Mock card data
+  // const clickedAttributeName = "AttributeX";
+  // const guids = [
+  //   {
+  //     id: "GUID1",
+  //     attributes: ["Attribute1", "AttributeX", "Attribute3"],
+  //   },
+  //   {
+  //     id: "GUID2",
+  //     attributes: ["Attribute2", "Attribute4", "AttributeX"],
+  //   },
+  // ];
 
   const handleSelect = (guidId: string) => {
     setSelectedGuids((prev) => {
@@ -47,7 +71,7 @@ export default function ConflictResolution() {
   return (
     <div className="w-4/5 max-w-xl bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transform -translate-y-3/5">
       <h1 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-        Resolve conflicts for attribute: {clickedAttributeName}
+        Resolve conflicts for attribute: {id || "Loading..."}
       </h1>
 
       <div className="guid-grid mb-4">
@@ -58,7 +82,8 @@ export default function ConflictResolution() {
               selectedGuids.includes(guid.id)
                 ? "bg-blue-200 dark:bg-blue-800"
                 : "bg-gray-200 dark:bg-gray-700"
-            }`}>
+            }`}
+          >
             <h2 className="text-lg font-medium mb-2">{guid.id}</h2>
             <ul>
               {guid.attributes.map((attr) => (
@@ -66,14 +91,16 @@ export default function ConflictResolution() {
                   key={attr}
                   className={`mb-1 ${
                     attr === clickedAttributeName ? "text-red-500" : ""
-                  }`}>
+                  }`}
+                >
                   {attr}
                 </li>
               ))}
             </ul>
             <button
               onClick={() => handleSelect(guid.id)}
-              className="mt-2 bg-blue-500 text-white p-2 rounded">
+              className="mt-2 bg-blue-500 text-white p-2 rounded"
+            >
               Select/Merge
             </button>
           </div>
@@ -88,12 +115,14 @@ export default function ConflictResolution() {
               ? "bg-green-500 text-white"
               : "bg-gray-400 text-white opacity-25 cursor-not-allowed"
           }`}
-          disabled={!isAnyCardSelected}>
+          disabled={!isAnyCardSelected}
+        >
           Merge Selected
         </button>
         <button
           onClick={handleDiscard}
-          className="bg-red-500 text-white p-2 rounded">
+          className="bg-red-500 text-white p-2 rounded"
+        >
           Discard Changes
         </button>
       </div>
